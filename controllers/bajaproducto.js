@@ -1,5 +1,5 @@
-const BajaProducto = require('../models/BajaProducto');
-const Insumo = require('../models/Insumo'); // Asegúrate de tener este modelo para verificar los productos
+const BajaProducto = require('../modules/bajaproducto');
+const Insumo = require('../modules/insumo'); // Asegúrate de tener este modelo para verificar los productos
 
 // Obtener todas las bajas de productos
 const obtenerBajasProductos = async (req, res) => {

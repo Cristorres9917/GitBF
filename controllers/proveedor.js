@@ -1,4 +1,4 @@
-const Proveedor = require('../models/Proveedor');
+const Proveedor = require('../modules/proveedor');
 
 
 // Obtener todos los proveedores

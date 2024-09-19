@@ -1,14 +1,23 @@
-const express = require('express');
-const router = express.Router();
-const { obtenerBajas, crearBaja, eliminarBaja } = require('../controllers/bajaproducto');
+const { Router } = require('express');
+const {
+    obtenerBajasProductos,
+    crearBajaProducto,
+    actualizarBajaProducto,
+    eliminarBajaProducto
+} = require('../controllers/bajaproducto');
+
+const router = Router();
 
 // Obtener todas las bajas de productos
-router.get('/', obtenerBajas);
+router.get('/', obtenerBajasProductos);
 
 // Crear una nueva baja de producto
-router.post('/', crearBaja);
+router.post('/', crearBajaProducto);
+
+// Actualizar una baja de producto por ID
+router.put('/:id', actualizarBajaProducto);
 
 // Eliminar una baja de producto por ID
-router.delete('/:id', eliminarBaja);
+router.delete('/:id', eliminarBajaProducto);
 
 module.exports = router;
