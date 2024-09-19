@@ -1,7 +1,7 @@
 const BajaProducto = require('../modules/bajaproducto');
-const Insumo = require('../modules/insumo'); // Asegúrate de tener este modelo para verificar los productos
+const Insumo = require('../modules/insumo');
 
-// Obtener todas las bajas de productos
+// Funciones para manejar las rutas
 const obtenerBajasProductos = async (req, res) => {
     try {
         const bajas = await BajaProducto.find();
@@ -11,38 +11,29 @@ const obtenerBajasProductos = async (req, res) => {
     }
 };
 
-// Crear una nueva baja de producto
 const crearBajaProducto = async (req, res) => {
     const { productoId, fechaBaja, cantidad, observaciones } = req.body;
 
     try {
-        // Verificar que el producto existe en la tabla de insumos
         const insumo = await Insumo.findById(productoId);
         if (!insumo) {
             return res.status(404).json({ message: 'Producto no encontrado en insumos' });
         }
 
-        // Crear la nueva baja
         const nuevaBaja = new BajaProducto({
-            producto: insumo.nombre, // Utiliza el nombre del producto del insumo
+            producto: insumo.nombreInsumo,
             fechaBaja,
             cantidad,
             observaciones
         });
 
         await nuevaBaja.save();
-
-        // Actualizar el estado del insumo si es necesario (opcional)
-        // insumo.estado = 'Baja'; // Si tienes un campo de estado en Insumo
-        // await insumo.save();
-
         res.status(201).json({ message: 'Baja de producto creada con éxito', baja: nuevaBaja });
     } catch (error) {
         res.status(500).json({ message: 'Error al crear la baja de producto', error });
     }
 };
 
-// Actualizar una baja de producto por ID
 const actualizarBajaProducto = async (req, res) => {
     const { id } = req.params;
     const { producto, fechaBaja, cantidad, observaciones } = req.body;
@@ -64,7 +55,6 @@ const actualizarBajaProducto = async (req, res) => {
     }
 };
 
-// Eliminar una baja de producto por ID
 const eliminarBajaProducto = async (req, res) => {
     const { id } = req.params;
 
@@ -81,7 +71,6 @@ const eliminarBajaProducto = async (req, res) => {
     }
 };
 
-// Cambiar el estado de una baja de producto por ID
 const cambiarEstadoBajaProducto = async (req, res) => {
     const { id } = req.params;
     const { estado } = req.body;
