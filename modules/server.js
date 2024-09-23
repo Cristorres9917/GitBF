@@ -7,7 +7,7 @@ const path = require('path');
 class Server {
     constructor() {
         this.app = express();
-        this.port = process.env.PORT || 3000; // Asegúrate de tener un puerto predeterminado
+        this.port = process.env.PORT || 5000; // Asegúrate de tener un puerto predeterminado
         this.usuariosPath = '/api/usuarios';
         this.rolesPath = '/api/roles';
         this.permisosPath = '/api/permisos';
@@ -17,8 +17,10 @@ class Server {
         this.ventaserviciosPath = '/api/ventaservicios';
         this.insumosPath = '/api/insumos';
         this.categoriaproductosPath = '/api/categoriaproductos';
+        this.productosPath = '/api/productos';
         this.proveedoresPath = '/api/proveedores'; // Agrega la ruta de proveedores
         this.authPath = '/api/auth';
+        this.ventasproductosPath = '/api/ventasproductos'; // Ruta de ventas de productos
         this.middlewares();
         this.routes();
         this.connectDb();
@@ -33,7 +35,7 @@ class Server {
     middlewares() {
         // CORS
         this.app.use(cors({
-            origin: 'http://localhost:3000',
+            origin: 'http://localhost:5000',
         }));
 
         this.app.use(bodyParser.json()); // for parsing application/json
@@ -42,8 +44,6 @@ class Server {
         // Para servir los archivos subidos
         this.app.use(express.static('uploads'));
         this.app.use('/uploads', express.static(path.join(__dirname, '../uploads')));
-
-         
     }
 
     routes() {
@@ -56,7 +56,9 @@ class Server {
         this.app.use(this.ventaserviciosPath, require('../routes/ventaservicios'));
         this.app.use(this.insumosPath, require('../routes/insumos'));
         this.app.use(this.proveedoresPath, require('../routes/proveedor'));
-        this.app.use(this.categoriaproductosPath, require('../routes/categoriaProductos')); 
+        this.app.use(this.categoriaproductosPath, require('../routes/categoriaProductos'));
+        this.app.use(this.productosPath, require('../routes/productos'));
+        this.app.use(this.ventasproductosPath, require('../routes/ventaProducto')); // Ruta de ventas de productos
         this.app.use(this.authPath, require('../routes/auth'));
     }
 
