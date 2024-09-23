@@ -56,7 +56,7 @@ class Server {
         this.app.use(this.ventaserviciosPath, require('../routes/ventaservicios'));
         this.app.use(this.insumosPath, require('../routes/insumos'));
         this.app.use(this.proveedoresPath, require('../routes/proveedor'));
-        this.app.use(this.proveedoresPath, require('../routes/categoriaProductos')); 
+        this.app.use(this.categoriaproductosPath, require('../routes/categoriaProductos')); 
         this.app.use(this.authPath, require('../routes/auth'));
     }
 
