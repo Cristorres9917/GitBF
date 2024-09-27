@@ -1,22 +1,15 @@
 const { response } = require('express');
 const mongoose = require('mongoose');
 const Ventaservicio = require('../modules/ventaservicio'); 
-const Detalleservicio = require('../modules/detalleservicio');
-
+const Cita = require('../modules/cita');
+const Cliente = require('../modules/cliente'); // Importar el modelo Cliente
 
 // Obtener todos los servicios
-// Obtener todos los servicios
-// Ejemplo de uso
 const ventaserviciosGet = async (req, res) => {
     try {
         const ventaservicios = await Ventaservicio.find()
-            .populate({
-                path: 'detalle',
-                populate: {
-                    path: 'servicio', // Campo en Detalleservicio que referencia a Servicio
-                    model: 'Servicio' // Nombre del modelo de Servicio
-                }
-            });
+            .populate('cita')
+            .populate('cliente'); // Agregar populate para el cliente
 
         if (ventaservicios.length === 0) {
             return res.status(404).json({
@@ -34,10 +27,12 @@ const ventaserviciosGet = async (req, res) => {
         });
     }
 };
+
 // Crear una nueva venta de servicio
 const ventaserviciosPost = async (req, res = response) => {
-    const { cita, detalle, cliente, duracion, precioTotal, estado } = req.body;
+    const { cita, cliente, duracion, precioTotal, estado } = req.body;
 
+    // Validar campos obligatorios
     if (!cita || !cliente || !duracion || !precioTotal || estado === undefined) {
         return res.status(400).json({
             msg: 'Cita, cliente, duración, precio total y estado son obligatorios.'
@@ -45,16 +40,29 @@ const ventaserviciosPost = async (req, res = response) => {
     }
 
     try {
-        if (detalle) {
-            const existeDetalleServicio = await Detalleservicio.findById(detalle);
-            if (!existeDetalleServicio) {
-                return res.status(400).json({
-                    msg: 'El detalle de servicio especificado no existe en la base de datos.'
-                });
-            }
+        // Verificar que la cita y el cliente existan
+        const existeCita = await Cita.findById(cita);
+        if (!existeCita) {
+            return res.status(400).json({
+                msg: 'La cita especificada no existe en la base de datos.'
+            });
         }
 
-        const ventaservicio = new Ventaservicio({ cita, detalle, cliente, duracion, precioTotal, estado });
+        const existeCliente = await Cliente.findById(cliente); // Verificar que el cliente exista
+        if (!existeCliente) {
+            return res.status(400).json({
+                msg: 'El cliente especificado no existe en la base de datos.'
+            });
+        }
+
+        // Crear la venta de servicio sin el campo detalle
+        const ventaservicio = new Ventaservicio({ 
+            cita, 
+            cliente, 
+            duracion, 
+            precioTotal, 
+            estado 
+        });
 
         await ventaservicio.save();
         res.status(201).json({
@@ -72,8 +80,9 @@ const ventaserviciosPost = async (req, res = response) => {
 // Actualizar una venta existente
 const ventaserviciosPut = async (req, res = response) => {
     const { id } = req.params;
-    const { cita, cliente, duracion, precioTotal, estado, detalle } = req.body;
+    const { cita, cliente, duracion, precioTotal, estado } = req.body;
 
+    // Validar campos obligatorios
     if (!cita || !cliente || !duracion || !precioTotal || estado === undefined) {
         console.log('Datos recibidos para actualizar:', req.body);
         return res.status(400).json({
@@ -89,17 +98,23 @@ const ventaserviciosPut = async (req, res = response) => {
             });
         }
 
-        if (detalle) {
-            const existeDetalleServicio = await Detalleservicio.findById(detalle);
-            if (!existeDetalleServicio) {
-                return res.status(400).json({
-                    msg: 'El detalle de servicio especificado no existe en la base de datos.'
-                });
-            }
+        // Verificar que la cita y el cliente existan
+        const existeCita = await Cita.findById(cita);
+        if (!existeCita) {
+            return res.status(400).json({
+                msg: 'La cita especificada no existe en la base de datos.'
+            });
         }
 
+        const existeCliente = await Cliente.findById(cliente); // Verificar que el cliente exista
+        if (!existeCliente) {
+            return res.status(400).json({
+                msg: 'El cliente especificado no existe en la base de datos.'
+            });
+        }
+
+        // Actualizar los campos de la venta
         venta.cita = cita;
-        venta.detalle = detalle || null;
         venta.cliente = cliente;
         venta.duracion = duracion;
         venta.precioTotal = precioTotal;

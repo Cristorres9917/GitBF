@@ -7,7 +7,7 @@ const path = require('path');
 class Server {
     constructor() {
         this.app = express();
-        this.port = process.env.PORT || 5000; // Asegúrate de tener un puerto predeterminado
+        this.port = process.env.PORT || 3000; 
         this.usuariosPath = '/api/usuarios';
         this.rolesPath = '/api/roles';
         this.permisosPath = '/api/permisos';
@@ -16,11 +16,15 @@ class Server {
         this.detalleserviciosPath = '/api/detalleservicios';
         this.ventaserviciosPath = '/api/ventaservicios';
         this.insumosPath = '/api/insumos';
+        this.empleadosPath = '/api/empleados';
+        this.clientesPath = '/api/clientes';
+        this.citasPath = '/api/citas';
         this.categoriaproductosPath = '/api/categoriaproductos';
         this.productosPath = '/api/productos';
-        this.proveedoresPath = '/api/proveedores'; // Agrega la ruta de proveedores
+        this.proveedoresPath = '/api/proveedores';
+        this.ventaproductosPath = '/api/ventaproductos'; 
+        this.comprasPath = '/api/compras';
         this.authPath = '/api/auth';
-        this.ventasproductosPath = '/api/ventasproductos'; // Ruta de ventas de productos
         this.middlewares();
         this.routes();
         this.connectDb();
@@ -35,7 +39,7 @@ class Server {
     middlewares() {
         // CORS
         this.app.use(cors({
-            origin: 'http://localhost:5000',
+            origin: 'http://localhost:3000',
         }));
 
         this.app.use(bodyParser.json()); // for parsing application/json
@@ -51,14 +55,18 @@ class Server {
         this.app.use(this.rolesPath, require('../routes/roles'));
         this.app.use(this.permisosPath, require('../routes/permisos'));
         this.app.use(this.tiposerviciosPath, require('../routes/tiposervs'));
-        this.app.use(this.serviciosPath, require('../routes/servicios')); // Asegúrate de que esta ruta use multer
+        this.app.use(this.serviciosPath, require('../routes/servicios')); 
         this.app.use(this.detalleserviciosPath, require('../routes/detalleservicios'));
         this.app.use(this.ventaserviciosPath, require('../routes/ventaservicios'));
         this.app.use(this.insumosPath, require('../routes/insumos'));
+        this.app.use(this.empleadosPath, require('../routes/empleados'));
+        this.app.use(this.clientesPath, require('../routes/clientes'));
+        this.app.use(this.citasPath, require('../routes/citas'));
         this.app.use(this.proveedoresPath, require('../routes/proveedor'));
         this.app.use(this.categoriaproductosPath, require('../routes/categoriaProductos'));
         this.app.use(this.productosPath, require('../routes/productos'));
-        this.app.use(this.ventasproductosPath, require('../routes/ventaProducto')); // Ruta de ventas de productos
+        this.app.use(this.ventaproductosPath, require('../routes/ventaproductos'));
+        this.app.use(this.comprasPath, require('../routes/compra'));
         this.app.use(this.authPath, require('../routes/auth'));
     }
 
